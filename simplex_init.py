@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.linalg import norm, inv
-from simplex_step import simplex_step
+from simplex_step import simplex_step #for the extra credit file
+#from simplex_step1 import simplex_step #for the non-extra credit file
 
 def simplex_init(A,b,c):
   iB = [] #list of variables that are in the basis
