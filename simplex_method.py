@@ -1,7 +1,8 @@
 import numpy as np
 from numpy.linalg import norm, inv
 from simplex_init import simplex_init
-from simplex_step import simplex_step
+from simplex_step import simplex_step #for the extra credit file
+#from simplex_step1 import simplex_step #for the non-extra credit file
 
 def simplex_method(A,b,c,irule):
   [init,iB,iN,xB] = simplex_init(A,b,c)
