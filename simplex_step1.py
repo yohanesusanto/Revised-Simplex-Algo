@@ -1,7 +1,13 @@
-#Simplex step using the product form of the inverse(Extra Credit)
+#Simplex step using row operations
 import numpy as np
 from numpy.linalg import norm, inv
 import sys
+
+def pivot_step(A,i,j): #i=row number, j=column number
+  A[i] = A[i]/A[i,j]
+  for k in range(len(A[:])): #updating the column of the matrix so that they equal to 0
+    if k!=i:
+      A[k]=A[k]-A[k,j]*A[i]
 
 def simplex_step(A,b,c,iB,iN,xB,Binv,irule):
   coefficient_base = []
@@ -23,7 +29,7 @@ def simplex_step(A,b,c,iB,iN,xB,Binv,irule):
       print("OPTIMAL")
       return [istatus,iB,iN,xB,Binv]
 
-    y = np.dot(Binv,A[:,entering_variable-1])
+    y = np.dot(Binv,A[:,entering_variable-1]) #entering column
     current_ratio = float('inf') #negative constant
     for i in range(y.size): #finding the minimum ratio
       if y[i,:] > sys.float_info.epsilon: #greater than epsilon
@@ -48,7 +54,7 @@ def simplex_step(A,b,c,iB,iN,xB,Binv,irule):
     if reduced_cost == 0: #if there is none, we are at optimality
       istatus = -1 #at optimality
       return [istatus,iB,iN,xB,Binv]
-    y = np.dot(Binv,A[:,entering_variable-1])
+    y = np.dot(Binv,A[:,entering_variable-1]) #entering column
 
     current_ratio = float('inf') #negative constant
     for i in range(y.size): #finding the minimum ratio
@@ -79,21 +85,16 @@ def simplex_step(A,b,c,iB,iN,xB,Binv,irule):
   iN.remove(entering_variable) #removing the entering variable from iN
   iN.insert(entering_index,leaving_variable) #inserting the leaving variable to iN
 
-
-  eta = np.matrix(np.copy(b))
-  for i in range(len(A[:])):
-    if (i == leaving_index):
-      eta[i,0] = 1/y[i,0]
-    else:
-      eta[i,0] = -1*y[i,0]/y[leaving_index,0]
-  E=np.matrix(np.eye(len(iB)))
-  E[:,leaving_index] = eta
   if (np.linalg.det(A[:,[index_B-1 for index_B in iB]]) == 0):
     print("infeasible")
     istatus = 16 #infeasible
     return istatus,iB,iN,xB,A[:,[index_B-1 for index_B in iB]]
   else:
-    Binv = E*Binv
+    Binv = np.concatenate((y, Binv), axis=1)
+    pivot_step(Binv,leaving_index,0)
+    Binv = Binv[:,1:]
+
   xB = np.dot(Binv,b)
+
   istatus = 0
   return [istatus,iB,iN,xB,Binv]
